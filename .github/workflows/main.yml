@@ -1,0 +1,36 @@
+name: Manual Build and Zip (.NET 8)
+
+on:
+  workflow_dispatch:  # 仅手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8 SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore Il2CppDumper.sln
+
+    - name: Build solution
+      run: dotnet build Il2CppDumper.sln --configuration Release --no-restore
+
+    - name: Find and zip build outputs
+      run: |
+        mkdir output
+        find . -type f -path "*/bin/Release/*" -executable -o -name "*.dll" -o -name "*.exe" -exec cp --parents {} output \;
+        cd output
+        zip -r ../build-artifact.zip .
+
+    - name: Upload zipped artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Il2CppDumper-build
+        path: build-artifact.zip
