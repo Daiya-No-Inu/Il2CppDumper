@@ -25,19 +25,19 @@ jobs:
     # - name: Print build output for debugging
     #   run: find . -type f -path "*/bin/Release/*"
 
-    # - name: Copy build artifacts
-    #   run: |
-    #     mkdir -p output
-    #     find . -type f -path "*/bin/Release/*" \( -name "*.dll" -o -name "*.exe" -o -name "*.json" -o -name "*.pdb" \) -exec cp --parents {} output \;
+    - name: Copy build artifacts
+      run: |
+        mkdir -p output
+        find . -type f -path "*/bin/Release/*" -exec cp --parents {} output \;
 
-    # - name: Zip build artifacts
-    #   run: |
-    #     cd output
-    #     zip -r ../build-artifact.zip .
-    #     cd ..
+    - name: Zip build artifacts
+      run: |
+        cd output
+        zip -r ../build-artifact.zip .
+        cd ..
 
     - name: Upload zipped artifact
       uses: actions/upload-artifact@v4
       with:
         name: Il2CppDumper-build
-        path: ./bin/Release/*
+        path: build-artifact.zip
