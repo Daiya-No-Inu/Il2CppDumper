@@ -25,17 +25,25 @@ jobs:
     # - name: Print build output for debugging
     #   run: find . -type f -path "*/bin/Release/*"
 
-    - name: Copy build artifacts
-      run: |
-        mkdir -p output
-        find . -type f -path "*/bin/Release/*" -exec cp --parents {} output \;
+    # - name: Copy build artifacts
+    #   run: |
+    #     mkdir -p output
+    #     find . -type f -path "*/bin/Release/*" -exec cp --parents {} output \;
 
     - name: Zip build artifacts
       run: |
-        cd output
-        zip -r ../build-artifact.zip .
-        cd ..
+        $zipTarget = "build-artifact.zip"
+        $folders = Get-ChildItem -Recurse -Directory -Filter Release | Where-Object { $_.FullName -like "*\bin\Release" }
+        $tempDir = "to-zip"
+        Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Path $tempDir | Out-Null
 
+        foreach ($folder in $folders) {
+          $relPath = $folder.FullName.Substring((Get-Location).Path.Length + 1)
+          Copy-Item $folder.FullName -Destination (Join-Path $tempDir $relPath) -Recurse
+        }
+
+        Compress-Archive -Path "$tempDir\*" -DestinationPath $zipTarget
     - name: Upload zipped artifact
       uses: actions/upload-artifact@v4
       with:
