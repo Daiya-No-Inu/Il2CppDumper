@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -22,22 +22,22 @@ jobs:
     - name: Build solution
       run: dotnet build Il2CppDumper.sln --configuration Release --no-restore
 
-    - name: Print build output for debugging
-      run: find . -type f -path "*/bin/Release/*"
+    # - name: Print build output for debugging
+    #   run: find . -type f -path "*/bin/Release/*"
 
-    - name: Copy build artifacts
-      run: |
-        mkdir -p output
-        find . -type f -path "*/bin/Release/*" \( -name "*.dll" -o -name "*.exe" -o -name "*.json" -o -name "*.pdb" \) -exec cp --parents {} output \;
+    # - name: Copy build artifacts
+    #   run: |
+    #     mkdir -p output
+    #     find . -type f -path "*/bin/Release/*" \( -name "*.dll" -o -name "*.exe" -o -name "*.json" -o -name "*.pdb" \) -exec cp --parents {} output \;
 
-    - name: Zip build artifacts
-      run: |
-        cd output
-        zip -r ../build-artifact.zip .
-        cd ..
+    # - name: Zip build artifacts
+    #   run: |
+    #     cd output
+    #     zip -r ../build-artifact.zip .
+    #     cd ..
 
     - name: Upload zipped artifact
       uses: actions/upload-artifact@v4
       with:
         name: Il2CppDumper-build
-        path: build-artifact.zip
+        path: ./bin/Release/
