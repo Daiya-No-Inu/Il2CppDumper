@@ -22,8 +22,8 @@ jobs:
     - name: Build solution
       run: dotnet build Il2CppDumper.sln --configuration Release --no-restore
 
-    - name: Print build output for debugging
-      run: find . -type f -path "*/bin/Release/*"
+    # - name: Print build output for debugging
+    #   run: find . -type f -path "*/bin/Release/*"
 
     # - name: Copy build artifacts
     #   run: |
@@ -48,4 +48,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Il2CppDumper-build
-        path: build-artifact.zip
+        path: ${{ github.workspace }}/Il2CppDumper/bin/Release/net8.0/*
